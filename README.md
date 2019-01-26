@@ -13,28 +13,22 @@ For testing the application, the following packages need to be installed first:
   - Python 3
   - Docker
   - Postgresql Client
+  - Ansible (if using the ansible playbook for setting up the dependencies)
 ### Installation
-
-#### Using the ansible-playbook to install the dependent packages
-An ansible playbook is made available for installing most of the depedent packages. It can be used as below:
-```sh
-$ ansible-playbook app_setup.yaml --extra-vars "location=/home/gowtham/work"
-```
-
 
 #### Manually installing the dependent packages
 Install the dependencies as root user.
 
 ```sh
-$ apt-get install rabbitmq-server
-$ apt install python3-pip
-$ apt install virtualenv
-$ apt install docker.io
-$ apt-get install postgresql-client-common
-$ apt-get install postgresql-client
+$ sudo apt-get install rabbitmq-server
+$ sudo apt-get install python3-pip
+$ sudo apt-get install virtualenv
+$ sudo apt-get install docker.io
+$ sudo apt-get install postgresql-client-common
+$ sudo apt-get install postgresql-client
 ```
 
-Download the repo to disk:
+Download the repo:
 ```sh
 $ git clone https://github.com/icgowtham/produmer.git
 ```
@@ -52,12 +46,53 @@ $ pip3 install --upgrade pip
 $ pip3 install -r requirements.txt
 ```
 
-Setup the Postgres database container:
+Setup the Postgres database docker container:
 ```sh
 $ sudo docker pull postgres
+```
+
+#### Using the ansible-playbook to install the dependent packages
+An ansible playbook is made available for installing most of the depedent packages.
+```sh
+$ sudo apt-get install ansible
+```
+
+An example usage of the ansible playbook is given below:
+```sh
+$ ansible-playbook app_setup.yaml --user=gowtham --extra-vars "ansible_sudo_pass=gowtham location=/home/gowtham/work/tmp"
+```
+
+```sh
+$ ansible-playbook app_setup.yaml --user=<user> --extra-vars "ansible_sudo_pass=<sudo_password> location=<location_for_files>"
+```
+
+The ansible playbook does the following:
+  - Installs the following packages:
+    - python3-pip
+    - python-virtualenv
+    - rabbitmq-server
+    - docker.io
+    - postgresql-client-common
+    - postgresql-client
+  - Pulls the postgres docker image
+  - Clones this repo
+  - Sets up the Python3 virtual environment
+  - Installs the project requirements
+
+---
+
+
+Create a volume to store the postgres table data.
+```sh
 $ mkdir -p $HOME/docker/volumes/postgres
+```
+
+
+Start the postgres database docker container.
+```sh
 $ sudo docker run --rm --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data postgres
 ```
+
 
 Create the database table:
 ```sh
@@ -68,7 +103,12 @@ CREATE TABLE user_info(user_id SERIAL PRIMARY KEY, username VARCHAR (50) UNIQUE 
 \q
 ```
 
-Under one SSH terminal start the Celery worker(s) from the application directory:
+---
+
+### Running the application
+
+
+Under one SSH terminal start the Celery worker(s) from the project directory:
 ```sh
 $ celery -A tasks.tasks worker --loglevel=info
 ```
@@ -77,3 +117,20 @@ In another SSH terminal, change to the project directory and execute the client 
 ```sh
 python3 client.py
 ```
+
+To check the command line options provided by the client, execute: 
+```sh
+python3 client.py -h
+```
+
+
+### Todos
+    - Write Unit Tests
+    - Test with more clients
+    - Dockerize the application (including components like the RabbitMQ server, etc.)
+
+
+License
+----
+
+MIT
