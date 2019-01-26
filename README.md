@@ -17,7 +17,7 @@ For testing the application, the following packages need to be installed first:
 ### Installation
 
 #### Manually installing the dependent packages
-Install the dependencies as root user.
+Install the dependencies using `sudo` (i.e. as `root` user).
 
 ```sh
 $ sudo apt-get install rabbitmq-server
@@ -46,7 +46,7 @@ $ pip3 install --upgrade pip
 $ pip3 install -r requirements.txt
 ```
 
-Setup the Postgres database docker container:
+Pull the Postgres database docker container from Docker Hub:
 ```sh
 $ sudo docker pull postgres
 ```
@@ -66,6 +66,7 @@ $ ansible-playbook app_setup.yaml --user=gowtham --extra-vars "ansible_sudo_pass
 $ ansible-playbook app_setup.yaml --user=<user> --extra-vars "ansible_sudo_pass=<sudo_password> location=<location_for_files>"
 ```
 
+
 The ansible playbook does the following:
   - Installs the following packages:
     - python3-pip
@@ -82,15 +83,15 @@ The ansible playbook does the following:
 ---
 
 
-Create a volume to store the postgres table data.
+Create a volume to store the postgres table data. For e.g.
 ```sh
-$ mkdir -p $HOME/docker/volumes/postgres
+$ mkdir -p /home/gowtham/docker/volumes/postgres
 ```
 
 
 Start the postgres database docker container.
 ```sh
-$ sudo docker run --rm --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v $HOME/docker/volumes/postgres:/var/lib/postgresql/data postgres
+$ sudo docker run --rm --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v /home/gowtham/docker/volumes/postgres:/var/lib/postgresql/data postgres
 ```
 
 
