@@ -1,0 +1,47 @@
+﻿-
+    hosts: 127.0.0.1
+    connection: local
+    gather_facts: no
+    vars:
+        -
+            user_home: "{{ lookup('env','HOME') }}"
+    tasks:
+        -
+            name: 'Install pip3'
+            package: {name: python3-pip, state: present}
+            become: yes
+        -
+            name: 'Install python-virtualenv'
+            package: {name: python-virtualenv, state: present}
+            become: yes
+        -
+            name: 'Install RabbitMQ Server'
+            package: {name: rabbitmq-server, state: present}
+            become: yes
+        -
+            name: 'Install docker'
+            package: {name: docker.io, state: present}
+            become: yes
+        -
+            name: 'Install postgresql-client-common'
+            package: {name: postgresql-client-common, state: present}
+            become: yes
+        -
+            name: 'Install postgresql-client'
+            package: {name: postgresql-client, state: present}
+            become: yes
+        -
+            name: 'Pull postgres docker image'
+            shell: 'docker pull postgres'
+            become: yes
+        -
+            name: 'Cloning the repo'
+            git: {repo: 'https://github.com/icgowtham/produmer.git', dest: '{{ location }}', version: HEAD, force: yes}
+            delegate_to: localhost
+            changed_when: false
+        -
+            name: 'Setup Python3 virtual environment'
+            shell: 'virtualenv -p /usr/bin/python3 "{{ location }}/env"'
+        -
+            name: 'Install the requirements'
+            pip: 'requirements="{{ location }}/requirements.txt" virtualenv="{{ location }}/env"'
