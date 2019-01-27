@@ -36,7 +36,12 @@ def main():
         with open(csv_file_name, 'wb') as f:
             f.write(response.content)
     user_data = process_csv(csv_file_name)
-    result = send.delay(user_data)
+    # Place the data into the queue and get the result.
+    result = send.delay(user_data).get()
+    if result == 'Success':
+       print('Operation succeeded')
+    else:
+       print('Failed')
     
 
 if __name__ == '__main__':

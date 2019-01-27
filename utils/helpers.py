@@ -1,7 +1,9 @@
-"""Helpers utility functions."""
+"""Module for some common utility functions."""
+
 import csv
 import os
 import psycopg2
+
 from .config import DATA_DIR, UPDATE_STMT, INSERT_STMT
 
 USER_DATA_MAP = {}
@@ -96,10 +98,10 @@ def add_to_db(name, email_id):
     try:
         conn = connect_to_db()
         cur = conn.cursor()
-        print('*** UPDATE *** ', UPDATE_STMT.format(nm=name, em=email_id))
+        # This is the best way that I found to do an 'upsert' in a database agnostic way.
+        # Try to update the data first, and if no records get updated, insert them.
         cur.execute(UPDATE_STMT.format(nm=name, em=email_id))
         if cur.rowcount == 0:
-            print('*** INSERT ***', INSERT_STMT.format(nm=name, em=email_id))
             cur.execute(INSERT_STMT.format(nm=name, em=email_id))
         conn.commit()
         print('Successfully added/updated record!')
@@ -109,8 +111,3 @@ def add_to_db(name, email_id):
         raise e
     finally:
         disconnect_from_db(conn)
-
-
-def retrieve():
-    for k in USER_DATA_MAP:
-        yield USER_DATA_MAP[k]
