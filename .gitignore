@@ -1,0 +1,29 @@
+.git
+
+# Ignore local virtualenvs
+lib/
+bin/
+include/
+.Python/
+
+*.pyc
+*.pyo
+*.swp
+*.class
+*.orig
+
+# setuptools
+.eggs/
+
+build/
+dist/
+*.egg-info
+env/
+.env/
+.tox
+.cache
+.pytest_cache
+.coverage
+.coverage.*
+coverage.xml
+.idea
