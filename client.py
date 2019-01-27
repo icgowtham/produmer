@@ -42,9 +42,7 @@ def main():
        print('Operation succeeded')
     else:
        print('Failed')
-    
+
 
 if __name__ == '__main__':
     main()
-    # value = next(retrieve())
-    # print(result.get(timeout=5))

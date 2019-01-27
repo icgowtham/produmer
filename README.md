@@ -1,10 +1,5 @@
 `produmer` - A Python based producer-consumer application.
 
-**Table of Contents**
-
-[TOCM]
-
-[TOC]
 ## Introduction
 
 This is a Python based producer and consumer application which makes use of:
@@ -13,7 +8,7 @@ This is a Python based producer and consumer application which makes use of:
   - Postgres Database
 
 ## Prerequisites
-### NOTE: The instructions are given as on Ubuntu (> 16.04)
+##### NOTE: The instructions are given as on Ubuntu (> 16.04)
 
 For testing the application, the following packages need to be installed first:
   - RabbitMQ Server
@@ -21,10 +16,11 @@ For testing the application, the following packages need to be installed first:
   - Docker
   - Postgresql Client
   - Ansible (if using the ansible playbook for setting up the dependencies)
+
 ### Installation
 
 #### Manually installing the dependent packages
-Install the dependencies using `sudo` (i.e. as `root` user).
+  - Install the dependencies using `sudo` (i.e. as `root` user).
 
 ```sh
 $ sudo apt-get install rabbitmq-server
@@ -35,17 +31,17 @@ $ sudo apt-get install postgresql-client-common
 $ sudo apt-get install postgresql-client
 ```
 
-Download the repo:
+  - Download the repo:
 ```sh
 $ git clone https://github.com/icgowtham/produmer.git
 ```
 
-Change to the source code directory:
+  - Change to the source code directory:
 ```sh
 $ cd produmer
 ```
 
-Create a Python3 virtual environment and install the application requirements:
+  - Create a Python3 virtual environment and install the application requirements:
 ```sh
 $ virtualenv -p python3 env
 $ source env/bin/activate
@@ -53,7 +49,7 @@ $ pip3 install --upgrade pip
 $ pip3 install -r requirements.txt
 ```
 
-Pull the Postgres database docker container from Docker Hub:
+  - Pull the Postgres database docker container from Docker Hub:
 ```sh
 $ sudo docker pull postgres
 ```
@@ -90,19 +86,19 @@ The ansible playbook does the following:
 ---
 
 
-Create a volume to store the postgres table data. For e.g.
+  - Create a volume to store the postgres table data. For e.g.
 ```sh
 $ mkdir -p /home/gowtham/docker/volumes/postgres
 ```
 
 
-Start the postgres database docker container.
+  - Start the postgres database docker container.
 ```sh
 $ sudo docker run --rm --name pg-docker -e POSTGRES_PASSWORD=docker -d -p 5432:5432 -v /home/gowtham/docker/volumes/postgres:/var/lib/postgresql/data postgres
 ```
 
 
-Create the database table:
+  - Create the database table:
 ```sh
 $ export PGPASSWORD='docker'; psql -h localhost -U postgres -d postgres
 
@@ -116,12 +112,12 @@ CREATE TABLE user_info(user_id SERIAL PRIMARY KEY, username VARCHAR (50) UNIQUE 
 ## Running the application
 
 
-Under one SSH terminal start the Celery worker(s) from the project directory:
+Under one SSH terminal start the Celery worker(s) from the project directory (virtual environment is required):
 ```sh
 $ celery -A tasks.tasks worker --loglevel=info
 ```
 
-In another SSH terminal, change to the project directory and execute the client code:
+In another SSH terminal, change to the project directory and execute the client code (virtual environment is required):
 ```sh
 python3 client.py
 ```
@@ -133,10 +129,20 @@ python3 client.py -h
 
 ---
 
+##### Running the unit tests.
+  - From the project root directory, execute:
+```sh
+$ pytest -vs 
+```
+
+
+
+---
+
 ## TODO
-    - Write Unit Tests
     - Test with more clients
     - Dockerize the application (including components like the RabbitMQ server, etc.)
+    - Write Unit Tests
 
 ---
 
